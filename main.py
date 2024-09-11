@@ -1,6 +1,7 @@
 import asyncio
 from playwright.async_api import async_playwright
 import random
+import argparse
 
 # List of user agents to simulate different browsers
 USER_AGENTS = [
@@ -12,16 +13,11 @@ USER_AGENTS = [
 ]
 
 # List of URLs to visit
-URLS = [
-    'https://sharehisab.com/',
-]
-
 async def simulate_user_interaction(page):
     for _ in range(random.randint(2, 5)):
         scroll_distance = random.randint(100, 1000)
         await page.mouse.wheel(0, scroll_distance)
         await asyncio.sleep(random.uniform(1, 3))
-
     try:
         selector = 'body *'
         await page.wait_for_selector(selector, timeout=10000)  # Increase timeout to 10 seconds
@@ -45,23 +41,22 @@ async def simulate_user_interaction(page):
 async def visit_website(url):
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)  # Use headless mode
-        
         context = await browser.new_context(
             viewport={'width': random.randint(800, 1920), 'height': random.randint(600, 1080)},
             user_agent=random.choice(USER_AGENTS),
             locale='en-US',
             timezone_id='America/New_York',
         )
-
         page = await context.new_page()
         await page.goto(url, wait_until='networkidle')  # Wait until the network is idle
-
         print(f"Visited {url} successfully!")
-
         await simulate_user_interaction(page)
-
         await browser.close()
 
 if __name__ == "__main__":
-    url = random.choice(URLS)
-    asyncio.run(visit_website(url))
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description='Simulate user interaction on a website.')
+    parser.add_argument('-u', '--url', type=str, required=True, help='The URL of the website to visit')
+    args = parser.parse_args()
+    # Run the visit_website function with the provided URL
+    asyncio.run(visit_website(args.url))
