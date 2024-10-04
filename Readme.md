@@ -39,7 +39,7 @@ Follow the mentioned procedure to run this project in your local system.
  ```bash
    python3 main.py -u <URL> # python3 main.py -u https://facebook.com
    or 
-   python4 main.py --url <URL> # python3 main.py --url https://facebook.com
+   python3 main.py --url <URL> # python3 main.py --url https://facebook.com
    
  ```
 
