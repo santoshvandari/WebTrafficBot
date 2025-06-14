@@ -38,9 +38,14 @@ async def simulate_user_interaction(page):
     print(f"Staying on the page for {wait_time} seconds.")
     await asyncio.sleep(wait_time)
 
-async def visit_website(url):
+async def visit_website(url, proxy=None):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)  # Use headless mode
+        launch_args = {'headless': True}
+        if proxy:
+            launch_args['proxy'] = {'server': proxy}
+
+        browser = await p.chromium.launch(**launch_args)
+
         context = await browser.new_context(
             viewport={'width': random.randint(800, 1920), 'height': random.randint(600, 1080)},
             user_agent=random.choice(USER_AGENTS),
@@ -48,8 +53,8 @@ async def visit_website(url):
             timezone_id='America/New_York',
         )
         page = await context.new_page()
-        await page.goto(url, wait_until='networkidle')  # Wait until the network is idle
-        print(f"Visited {url} successfully!")
+        await page.goto(url, wait_until='networkidle')
+        print(f"Visited {url} successfully using proxy {proxy if proxy else 'None'}!")
         await simulate_user_interaction(page)
         await browser.close()
 
@@ -57,6 +62,7 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Simulate user interaction on a website.')
     parser.add_argument('-u', '--url', type=str, required=True, help='The URL of the website to visit')
+    parser.add_argument('-p', '--proxy', type=str, help='Proxy server (e.g., http://127.0.0.1:8080)')
     args = parser.parse_args()
-    # Run the visit_website function with the provided URL
-    asyncio.run(visit_website(args.url))
+
+    asyncio.run(visit_website(args.url, args.proxy))
