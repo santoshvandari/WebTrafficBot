@@ -37,10 +37,15 @@ Follow the mentioned procedure to run this project in your local system.
 ```
  - Run the Script
  ```bash
+   # Basic Usage:
    python3 main.py -u <URL> # python3 main.py -u https://facebook.com
    or 
    python3 main.py --url <URL> # python3 main.py --url https://facebook.com
    
+   # Proxy Usage:
+   python3 main.py -u <URL> -p <PROXY> # python3 main.py -u https://facebook.com -p http://username:password@proxyserver:port
+   or 
+   python3 main.py --url <URL> --proxy <PROXY> # python3 main.py --url https://facebook.com --proxy http://username:password@proxyserver:port
  ```
 
 ## Contributing
